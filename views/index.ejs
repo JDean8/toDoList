@@ -1,0 +1,21 @@
+<%- include('header.ejs') %>
+
+<div class="toDoList h-100 d-flex align-items-center justify-content-center">
+  <% if (locals.toDoList){ %>
+    <div class="list-group">
+    <% for (let i = 0; i<toDoList.length; i++){%>
+      <label class="list-group-item">
+        <input class="form-check-input me-1" type="checkbox" value="">
+        <span><%= toDoList[i] %></span>
+      </label>
+    <% } %>
+    <div>
+  <% } %>
+
+  <form action="<%=page%>" method="POST">
+      <input type="text" name="item" placeholder="<%=page%> task..."%>>
+      <input type="submit" value="OK">
+  </form>
+</div>
+
+<%- include('footer.ejs') %>

@@ -1,0 +1,13 @@
+:checked + span {
+    text-decoration: line-through;
+    color: gray
+}
+
+.list-group{
+    padding: 20px;
+}
+
+body {
+    background:linear-gradient(to left top, rgb(139, 220, 250), rgb(79, 254, 201));
+    background-attachment: fixed; /*edit*/
+}
