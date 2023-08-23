@@ -59,21 +59,47 @@ app.get('/', (req, res)=>{
 })
 
 app.get('/work', (req, res)=>{
-    res.render('index.ejs', {toDoList: work2Do, page: 'work'})
+    work2Do =[]
+    ListItem.find({list: "work"}).then(function(listitems){
+        listitems.forEach(function(listitem){
+            work2Do.push(listitem.text)
+        })
+        res.render('index.ejs', {toDoList: work2Do, page: 'work'})
+    }).catch(function(err){
+        console.log(err)
+    })
 })
 
 app.get('/personal', (req, res)=>{
-    res.render('index.ejs', {toDoList: personal2Do, page: 'personal'})
+    personal2Do =[]
+    ListItem.find({list: "personal"}).then(function(listitems){
+        listitems.forEach(function(listitem){
+            personal2Do.push(listitem.text)
+        })
+        res.render('index.ejs', {toDoList: personal2Do, page: 'personal'})
+    }).catch(function(err){
+        console.log(err)
+    })
 })
 
 app.post('/work',(req, res)=>{
-    work2Do.push(req.body.item)
-    res.render('index.ejs', {toDoList: work2Do, page: 'work'})
+    const workListItem = new ListItem({
+        list:'work',
+        text:req.body.item, 
+    })
+    workListItem.save().then(
+        res.redirect('/work')
+    )
 })
 
 app.post('/personal',(req, res)=>{
-    personal2Do.push(req.body.item)
-    res.render('index.ejs', {toDoList: personal2Do, page: 'personal'})
+    const personalListItem = new ListItem({
+        list:'personal',
+        text:req.body.item, 
+    })
+    personalListItem.save().then(
+        res.redirect('/personal')
+    )
 })
 
 app.listen(port,()=>{
