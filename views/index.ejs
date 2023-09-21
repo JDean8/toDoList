@@ -11,9 +11,9 @@
             class="form-check-input me-1"
             type="checkbox"
             name="checkbox"
-            value="<%=toDoList[i]%>"
+            value="<%=toDoList[i]._id%>"
           />
-          <span><%= toDoList[i] %></span>
+          <span><%= toDoList[i].text %></span>
         </label>
       </form>
       <% } %>
@@ -21,7 +21,7 @@
         <% } %>
 
         <form action="<%=page%>" method="POST">
-          <input type="text" name="item" placeholder="<%=page%> task..." % />>
+          <input type="text" name="item" placeholder="<%=page%> task..." % />
           <input type="submit" value="OK" />
         </form>
       </div>

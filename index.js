@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const app = express();
 const port = 3000;
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, strict: false }));
 app.use(express.static("public"));
 
 //connect to MongoDB and create default items
@@ -19,10 +19,6 @@ const listSchema = new mongoose.Schema({
     type: String,
     required: [true, "List item must have content"],
   },
-  completed: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const ListItem = mongoose.model("ListItem", listSchema);
@@ -32,7 +28,6 @@ const listItemOne = new ListItem({
   list: "work",
   text: "Update Linux servers",
 });
-
 const listItemTwo = new ListItem({
   list: "work",
   text: "Check for CVEs",
@@ -41,14 +36,13 @@ const listItemThree = new ListItem({
   list: "personal",
   text: "Buy new bathroom mirror",
 });
-
 const listItemFour = new ListItem({
   list: "personal",
   text: "Restring guitars",
 });
 
-//Add back the below if DB gets wiped (deafult values already in DB (22/08/23)
-//ListItem.insertMany([listItemOne, listItemTwo, listItemThree, listItemFour])
+//Add back the below if DB gets wiped
+//ListItem.insertMany([listItemOne, listItemTwo, listItemThree, listItemFour]);
 
 function getListItems(page, res) {
   const list = [];
@@ -57,7 +51,7 @@ function getListItems(page, res) {
       listitems.forEach((listitem) => {
         list.push(listitem.text);
       });
-      res.render("index.ejs", { toDoList: list, page: page });
+      res.render("index.ejs", { toDoList: listitems, page: page });
     })
     .catch(function (err) {
       console.log(err);
@@ -68,32 +62,24 @@ app.get("/", (req, res) => {
   res.redirect("/work");
 });
 
-app.get("/work", (req, res) => {
-  getListItems("work", res);
-});
-
-app.get("/personal", (req, res) => {
-  getListItems("personal", res);
-});
-
-app.post("/work", (req, res) => {
-  const workListItem = new ListItem({
-    list: "work",
-    text: req.body.item,
-  });
-  workListItem.save().then(res.redirect("/work"));
-});
-
-app.post("/personal", (req, res) => {
-  const personalListItem = new ListItem({
-    list: "personal",
-    text: req.body.item,
-  });
-  personalListItem.save().then(res.redirect("/personal"));
+app.get("/:page", (req, res) => {
+  const { page } = req.params;
+  getListItems(page, res);
 });
 
 app.post("/delete", (req, res) => {
-  console.log(req.body.checkbox);
+  ListItem.findByIdAndRemove(req.body.checkbox)
+    .then(res.redirect("back"))
+    .catch((err) => console.log(err.body));
+});
+
+app.post("/:page", (req, res) => {
+  const { page } = req.params;
+  const listItem = new ListItem({
+    list: page,
+    text: req.body.item,
+  });
+  listItem.save().then(res.redirect(`/${page}`));
 });
 
 app.listen(port, () => {
